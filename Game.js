@@ -41,11 +41,24 @@ Game.prototype.onResize = function() {
 };
 
 Game.prototype.onKeyDown = function(event) {
+  function preventTyping() {
+    if (event.ctrlKey || event.metaKey || event.metaKey) {
+      return;
+    }
+    event.preventDefault();
+  }
+
   var charMatch = event.key.toLowerCase().match(/^[a-z0-9'\-\/]$/);
   if (charMatch) {
     this.typedChars.push(charMatch[0]);
+    preventTyping();
   }
-  event.preventDefault();
+  if (event.key === "Backspace" || event.key === "Delete") {
+    if (this.typedChars.length > 0) {
+      this.typedChars.pop();
+    }
+    preventTyping();
+  }
 };
 
 Game.prototype.update = function() {
