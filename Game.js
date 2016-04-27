@@ -6,6 +6,9 @@ function Game() {
   this.enemyCount = 0;
   this.levelLength = 5;
   this.typedChars = [];
+  this.displayedScore = 0;
+  this.realScore = 0;
+  this.lost = false;
 
   this.canvas = document.getElementById('game');
   this.gfx = this.canvas.getContext('2d');
@@ -17,6 +20,7 @@ function Game() {
 
   this.lastUpdate = Date.now();
   this.lastSpawn = Date.now();
+  this.lastScoreTick = Date.now();
   this.spawnDelay = 0;
   this.difficulty = 5;
 
@@ -37,7 +41,7 @@ Game.prototype.onResize = function() {
 };
 
 Game.prototype.onKeyDown = function(event) {
-  var charMatch = event.key.toLowerCase().match(/^[a-z0-9']$/);
+  var charMatch = event.key.toLowerCase().match(/^[a-z0-9'\-\/]$/);
   if (charMatch) {
     this.typedChars.push(charMatch[0]);
   }
@@ -49,6 +53,22 @@ Game.prototype.update = function() {
 
   this.gfx.fillStyle = 'white';
   this.gfx.fillRect(0, 0, this.width, this.height);
+
+  this.gfx.font = '36px sans-serif';
+  this.gfx.fillStyle = 'rgba(0, 0, 0, 1.0)';
+  this.gfx.textAlign = 'center';
+  this.gfx.fillText('In Other Words', this.width / 2, 12 + 18);
+
+  if (this.lost) {
+    this.gfx.fillText('You Lose', this.width / 2, this.height / 2 - 18 - 6);
+    this.gfx.fillText(this.realScore, this.width / 2, this.height / 2 + 18 + 6);
+    return;
+  }
+
+  this.gfx.textAlign = 'end';
+  this.gfx.fillText(this.displayedScore, this.width - 12, 12 + 18);
+  this.gfx.textAlign = 'start'; // restore
+
 
   if (this.bosses.length > 0) {
     this.bosses = this.bosses.filter(function(boss) {
@@ -95,14 +115,31 @@ Game.prototype.update = function() {
     this.typedChars = [];
   }
 
+  var deaths = this.enemies.filter(function(enemy) {
+    return !enemy.alive;
+  });
+
+  this.addPoints(deaths.reduce(function(score, enemy) {
+    return score + Math.round(enemy.difficulty());
+  }, 0));
+
   this.enemies = this.enemies.filter(function(enemy) {
     return enemy.alive;
   });
+
+  if (this.realScore > this.displayedScore && this.lastScoreTick + 60 < Date.now()) {
+    this.displayedScore += 1;
+    this.lastScoreTick = Date.now();
+  }
 
   this.lastUpdate += dt;
   window.requestAnimationFrame(this.update);
 };
 
+Game.prototype.addPoints = function(points) {
+  this.realScore += points;
+};
+
 Game.prototype.lose = function() {
-  console.log('loss');
+  this.lost = true;
 };

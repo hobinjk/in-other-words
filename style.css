@@ -1,3 +1,7 @@
+body {
+  font: 36px sans-serif;
+}
+
 #game {
   position: absolute;
   top: 0;
@@ -8,4 +12,12 @@
 
 #sprite {
   display: none;
+}
+
+.republican {
+  color: #DE0100;
+}
+
+.democrat {
+  color: #1404BD;
 }

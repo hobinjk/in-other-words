@@ -11,6 +11,7 @@ function Enemy(game, targetDifficulty) {
   this.alive = true;
   this.progress = 0;
   this.words = [];
+  this.wordIndex = 0;
 
   var count = Math.ceil(Math.random() * Math.random() * 6 * targetDifficulty / 10);
   // int 2 <= wordLength <= 14
@@ -52,17 +53,17 @@ Enemy.prototype.update = function(dt) {
 
 Enemy.prototype.updateTypedWord = function(typedWord) {
   this.progress = 0;
-  var word = this.words[0].toLowerCase();
+  var word = this.words[this.wordIndex].toLowerCase();
   for (var i = 0; i < typedWord.length; i++) {
     if (typedWord[i] !== word[this.progress]) {
       this.progress = 0;
       continue;
     }
-    this.progress++;
+    this.progress += 1;
     if (this.progress >= word.length) {
-      this.words.shift();
+      this.wordIndex += 1;
       this.progress = 0;
-      if (this.words.length === 0) {
+      if (this.wordIndex >= this.words.length) {
         this.alive = false;
       }
       return true;
@@ -77,9 +78,9 @@ Enemy.prototype.draw = function(gfx) {
   } else {
     gfx.drawImage(this.sprite, this.x, this.y, 30, 26.25);
   }
-  if (this.words.length > 0) {
+  if (this.wordIndex < this.words.length) {
     gfx.font = '24px sans-serif';
-    var word = this.words[0];
+    var word = this.words[this.wordIndex];
     gfx.fillStyle = 'rgba(0, 0, 0, 1.0)';
     gfx.fillText(word, this.x, this.y - 12);
     if (this.progress > 0) {
