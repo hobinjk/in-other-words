@@ -1,3 +1,7 @@
+/**
+ * Copied from http://splasho.com/upgoer5/
+ */
+/* eslint-disable no-unused-vars */
 var thousand = [
   'a',
   'able',
@@ -964,4 +968,4 @@ var thousand = [
   'your',
   'yourself',
   'TRUE'
-]
+];
