@@ -2,6 +2,13 @@ body {
   font: 36px sans-serif;
 }
 
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-50%);
+}
+
 #game {
   position: absolute;
   top: 0;
