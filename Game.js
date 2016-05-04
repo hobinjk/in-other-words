@@ -57,7 +57,8 @@ Game.prototype.onKeyDown = function(event) {
     this.typedChars.push(charMatch[0]);
     preventTyping();
   }
-  if (event.key === "Backspace" || event.key === "Delete") {
+  if (event.key === "Backspace" || event.key === "Delete"
+     || event.keyCode == 8 || event.keyCode == 48) {
     if (this.typedChars.length > 0) {
       this.typedChars.pop();
     }

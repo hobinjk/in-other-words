@@ -24,10 +24,11 @@ function StartState() {
 
   this.tutorialEnemy = new DialogEnemy(30, this.height / 2 - 200, 'Type the words that you agree with:');
   this.easyEnemy = new DialogEnemy(this.width / 3, this.height / 2 - 100, 'I am bad at typing');
-  this.mediumEnemy = new DialogEnemy(this.width / 3, this.height / 2 + 100, 'I am good at typing');
-  this.hardEnemy = new DialogEnemy(this.width / 3, this.height / 2 + 300, 'I am great at typing');
+  this.mediumEnemy = new DialogEnemy(this.width / 3, this.height / 2, 'I am good at typing');
+  this.hardEnemy = new DialogEnemy(this.width / 3, this.height / 2 + 100, 'I am great at typing');
   this.affirmEnemy = new DialogEnemy(this.width * 0.6, this.height / 2 - 100, 'I want my views to be affirmed');
-  this.challengeEnemy = new DialogEnemy(this.width * 0.6, this.height / 2 + 100, 'I want my views to be challenged');
+  this.challengeEnemy = new DialogEnemy(this.width * 0.6, this.height / 2, 'I want my views to be challenged');
+  this.otherTutorialEnemy = new DialogEnemy(30, this.height / 2 + 200, 'Do not let any words get away');
 
   this.enemies = [
     this.tutorialEnemy,
@@ -35,7 +36,8 @@ function StartState() {
     this.mediumEnemy,
     this.hardEnemy,
     this.affirmEnemy,
-    this.challengeEnemy
+    this.challengeEnemy,
+    this.otherTutorialEnemy
   ];
 }
 
