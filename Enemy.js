@@ -1,4 +1,4 @@
-/* global randomChoice, wordsDatabase */
+/* global demWordsDatabase, repWordsDatabase, Typing */
 
 function Enemy(game, targetDifficulty) {
   this.game = game;
@@ -6,12 +6,10 @@ function Enemy(game, targetDifficulty) {
   this.boss = false;
   this.sprite = document.getElementById('sprite');
 
-  this.x = this.game.width + 30;
+  this.x = this.game.width + 2;
   this.y = Math.random() * (this.game.height - 80) + 40;
   this.alive = true;
-  this.progress = 0;
   this.words = [];
-  this.wordIndex = 0;
 
   var count = Math.ceil(Math.random() * Math.random() * 6 * targetDifficulty / 10);
   // int 2 <= wordLength <= 14
@@ -20,11 +18,13 @@ function Enemy(game, targetDifficulty) {
   var lastWord = '';
   var words = [];
   for (var i = 0; i < count; i++) {
-    var potentials = wordsDatabase[wordLength];
-    potentials = potentials.concat(wordsDatabase[wordLength + 1]);
     var chosenWord = '';
     do {
-      chosenWord = randomChoice(potentials);
+      chosenWord = this.game.biasedRandomChoice(
+        demWordsDatabase[wordLength].concat(demWordsDatabase[wordLength + 1]),
+        repWordsDatabase[wordLength].concat(repWordsDatabase[wordLength + 1]),
+        0.2
+      );
     } while(chosenWord === lastWord);
     words.push(chosenWord);
   }
@@ -34,6 +34,7 @@ function Enemy(game, targetDifficulty) {
 
 Enemy.prototype.setWords = function(words) {
   this.words = words;
+  this.typing = new Typing(words);
   // Go faster if we're under difficulty budget
   this.speed = Math.max(Math.min(this.targetDifficulty / this.difficulty(), 2), 0.3);
 };
@@ -48,44 +49,20 @@ Enemy.prototype.difficulty = function() {
 };
 
 Enemy.prototype.update = function(dt) {
-  this.x -= this.speed * dt * 0.03;
+  this.x -= this.speed * dt * this.game.speedMult;
 };
 
 Enemy.prototype.updateTypedWord = function(typedWord) {
-  this.progress = 0;
-  var word = this.words[this.wordIndex].toLowerCase();
-  for (var i = 0; i < typedWord.length; i++) {
-    if (typedWord[i] !== word[this.progress]) {
-      this.progress = 0;
-      continue;
-    }
-    this.progress += 1;
-    if (this.progress >= word.length) {
-      this.wordIndex += 1;
-      this.progress = 0;
-      if (this.wordIndex >= this.words.length) {
-        this.alive = false;
-      }
-      return true;
-    }
-  }
-  return false;
+  var res = this.typing.updateTypedWord(typedWord);
+  this.alive = this.alive && this.typing.alive;
+  return res;
 };
 
 Enemy.prototype.draw = function(gfx) {
   if (this.boss) {
-    gfx.drawImage(this.sprite, this.x, this.y, 80, 70);
+    gfx.font = '36px sans-serif';
   } else {
-    gfx.drawImage(this.sprite, this.x, this.y, 30, 26.25);
-  }
-  if (this.wordIndex < this.words.length) {
     gfx.font = '24px sans-serif';
-    var word = this.words[this.wordIndex];
-    gfx.fillStyle = 'rgba(0, 0, 0, 1.0)';
-    gfx.fillText(word, this.x, this.y - 12);
-    if (this.progress > 0) {
-      gfx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-      gfx.fillText(word.substr(0, this.progress), this.x, this.y - 12);
-    }
   }
+  this.typing.draw(gfx, this.x, this.y);
 };
