@@ -28,7 +28,6 @@ function StartState() {
   this.hardEnemy = new DialogEnemy(this.width / 3, this.height / 2 + 100, 'I am great at typing');
   this.affirmEnemy = new DialogEnemy(this.width * 0.6, this.height / 2 - 100, 'I want my views to be affirmed');
   this.challengeEnemy = new DialogEnemy(this.width * 0.6, this.height / 2, 'I want my views to be challenged');
-  this.otherTutorialEnemy = new DialogEnemy(30, this.height / 2 + 200, 'Do not let any words get away');
 
   this.enemies = [
     this.tutorialEnemy,
@@ -36,8 +35,7 @@ function StartState() {
     this.mediumEnemy,
     this.hardEnemy,
     this.affirmEnemy,
-    this.challengeEnemy,
-    this.otherTutorialEnemy
+    this.challengeEnemy
   ];
 }
 
